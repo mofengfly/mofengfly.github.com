@@ -5,10 +5,10 @@ layout: home
 <div class="index-content project">
     <div class="section">
         <ul class="artical-cate">
-           <li><a href="/"><span>Javascript</span></a></li>
-            <li class="on" style="text-align:center"><a href="/css_post"><span>Css</span></a></li>
-            <li style="text-align:right"><a href="/nodejs"><span>NodeJs</span></a></li>
-            <li style="text-align:right"><a href="/linux"><span>Linux</span></a></li>
+            <li ><a href="/"><span>Javascript</span></a></li>
+            <li class="on"><a href="/css_post"><span>Css</span></a></li>
+            <li ><a href="/nodejs"><span>NodeJs</span></a></li>
+            <li ><a href="/linux"><span>Linux</span></a></li>
         </ul>
 
         <div class="cate-bar"><span id="cateBar"></span></div>

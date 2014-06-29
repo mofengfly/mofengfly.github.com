@@ -109,7 +109,7 @@ pre ol{margin-left:25px;list-style-type:decimal;}
 .index-content .artical-cate li a:hover { text-decoration:none; }
 .index-content .artical-cate li.on span{ color:red; }
 
-.index-content .cate-bar { height:3px; width:70%; margin:0 auto;margin-bottom:100px; }
+.index-content .cate-bar { height:3px; width:80%; margin:0 auto;margin-bottom:100px; }
 .index-content #cateBar { display:inline-block; zoom:1; height:3px; background:red; position:relative; width:0; }
 
 /***************Wiki Style*****************/
