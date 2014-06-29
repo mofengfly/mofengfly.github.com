@@ -15,6 +15,20 @@ Internally, the browsers are event-driven. Most actions occur asynchronously and
 * resize
 
 许多事件与Javascript整合，许多事件被严格限制在内部。
+JavaScript is single-threaded
+
+There is only one JavaScript thread per window. Other activities like rendering, downloading etc may be managed by separate threads, with different priorities.
+
+Web Workers
+
+There is a Web Workers standard (incomplete at the time of writing) which defines the support for multiple JavaScript workers. A worker is an independent JavaScript subprocess.
+
+Web workers are limited. They are able to execute JavaScript and exchange messages with the parent process, but they can’t access DOM.
+
+## Javascript是单线程的
+
+每个window只有一个js先出。像渲染，下载等活动被不同的先出使用不同的优先级管理。
+
 
 ##配置用户环境
 因为要跑多个站，所以最好将他们完全隔离，每个站对应一个用户，于是我们有了：
