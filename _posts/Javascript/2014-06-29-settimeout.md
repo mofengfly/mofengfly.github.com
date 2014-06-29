@@ -3,7 +3,7 @@ layout: post
 title: 深入理解定时器
 description: setTimeout and setInterval 在js经常用另外完成动画，将同步执行的代码转换成异步。这篇文章主要对定时器的内部机制进行分析和介绍
 关键字：setTimeout and setInterval javascript
-category: javascript
+category: Javascript
 ---
 浏览器内部是事件驱动的。大多数行为都是异步发生的。浏览器会创建一个事件放入事件队列里。
 Internally, the browsers are event-driven. Most actions occur asynchronously and create an event which is appended to the queue.
