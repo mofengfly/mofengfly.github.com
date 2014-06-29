@@ -14,28 +14,11 @@ Internally, the browsers are event-driven. Most actions occur asynchronously and
 * resize
 
 许多事件与Javascript整合，许多事件被严格限制在内部。
-JavaScript is single-threaded
-
-There is only one JavaScript thread per window. Other activities like rendering, downloading etc may be managed by separate threads, with different priorities.
 
 ## Javascript是单线程的
 
 每个window只有一个js线程。像渲染，下载等活动被不同的先出使用不同的优先级管理。
 
-Asynchronous events
-
-Most events are asynchronous.
-
-When an asynchronous event occurs, it gets into the Event queue.
-
-The browser has inner loop, called Event Loop, which checks the queue and processes events, executes functions etc.
-
-For example, if the browser is busy processing your onclick, and another event happened in the background (like script onload), it appends to the queue. When the onclick handler is complete, the queue is checked and the script is executed.
-
-setTimeout/setInterval also put executions of their functions into the event queue if browser is busy.
-
-In fact, most interactions and activities get passed through the Event Loop.
- 
 ## 异步事件
 
 当异步事件发生的时候，它会进入事件队列。
@@ -72,11 +55,7 @@ focus事件后面可能跟着mousedown。
 
 或者，有一个document.mouse管理的drag and drop，孩子元素想在拖拽后处理它的执行。
 
-Event capturing is not supported in IE<9. And there can be other reasons to avoid it.
-
 事件捕获在IE9以下不被支持。有其它的原因来避免它。
-The recipe is usually setTimeout(.., 0). On the example below, the click is first processed by document.body, then input:
-
 解决方案通常是setTimeout(.., 0)。在以下的例子，click首先被document.body处理，然后才是input:
 
      <input type="button" value='click'>
@@ -110,7 +89,6 @@ The recipe is usually setTimeout(.., 0). On the example below, the click is firs
      </script>
     
 
-See? It doesn't work! The value is uppercased *except last char*, because the browser appends the char *after* `keypress` is processed. Of course, we could switch to `keyup`, it has full value. But then the char would show up as lowercased, and get uppercased on key release. That looks weird. Type to see (`keyup`): The solution is to use `keypress`, but apply uppercase in a timeout: 
 
 试一下，你会发现，除了最后一个字母，输入框的值都被转换成大写了，因为浏览器在‘keypress’之后才会把字母放到输入框中。当然，我们可以使用‘keyup’。但是字符会作为小写字母显示，然后再key释放的时候才会被变成大写，这看起来会很奇怪。解决方案是使用‘keypress’，但是在timeout里应用准换。
 
@@ -132,8 +110,6 @@ timeout会在字符添加后执行，但是很快，因此这个延迟是看不�
 存在不需要使用事件队列的事件。他们被称为同步事件，会立即工作即使是在其他的handler里。
 
 ### DOM改变事件是同步的
-
-In the example below, the onclick handler changes an attribute of the link, which has a DOMAttrModified(onpropertychange for IE) listener.
 
 在下面的例子中，onclick事件处理器改变链接的属性，有一个DOMAttrModified(IE:onpropertychange)监听器。
 
@@ -177,8 +153,6 @@ click事件处理顺序：
      有些方法会触发立即执行的事件，比如elem.focus().这些事件会以同步的方式执行。
 
 
-Run the example below and click on the button. Notice that onfocus
-doesn’t wait onclick to complete, it works immediately.
 运行下面的例子。注意onfocus没有等到onclick完成，它是同步执行的。
 
      <input type="text">
@@ -201,11 +175,6 @@ doesn’t wait onclick to complete, it works immediately.
 
 如果事件是有JS的dispatchEvent/fireEvent触发的，它们也是同步执行的。
 
-Synchronous events break this one-by-one rule, that may can cause side-effects.
-
-For example, the onfocus handler may assume that onclick has completed the job.
-
-There are two ways to fix it:
 
 同步事件破坏了这种一对一的规则，可能会产生副作用。
 
@@ -223,8 +192,6 @@ There are two ways to fix it:
         alert(2)
       }
 
-
-JavaScript execution and rendering
 
 ##Javascript执行和渲染
 
@@ -255,18 +222,6 @@ JavaScript execution and rendering
 
 
 实现可能有所不同，但是一般俩说，节点被标记为“dirty”（需要重新计算和重绘），重绘事件排入队列，或者浏览器可能只是在每个脚本完成之后寻找dirty节点，然后处理他们。
-The browser contains many optimizations to speedup rendering and painting. Generally, it tries to postpone them until the script is finished, but some actions require nodes to be rerendered immediately.
-
-For example:
-elem.innerHTML = 'new content'
-alert(elem.offsetHeight)  // <-- rerenders elem to get offsetHeight
-
-In the case above, the browser has to perform relayouting to get the height.
-But it doesn’t have to repaint elem on the screen.
-
-Sometimes other dependant nodes may get involved into calculations. This process is called reflow and may consume lots of resources if script causes it often.
-
-Surely, there’s much more to talk about rendering. It will be covered by a separate article [todo].
 
       Immediate reflow
       
