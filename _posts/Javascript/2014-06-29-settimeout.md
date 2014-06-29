@@ -19,361 +19,282 @@ JavaScript is single-threaded
 
 There is only one JavaScript thread per window. Other activities like rendering, downloading etc may be managed by separate threads, with different priorities.
 
-Web Workers
-
-There is a Web Workers standard (incomplete at the time of writing) which defines the support for multiple JavaScript workers. A worker is an independent JavaScript subprocess.
-
-Web workers are limited. They are able to execute JavaScript and exchange messages with the parent process, but they can’t access DOM.
-
 ## Javascript是单线程的
 
-每个window只有一个js先出。像渲染，下载等活动被不同的先出使用不同的优先级管理。
+每个window只有一个js线程。像渲染，下载等活动被不同的先出使用不同的优先级管理。
 
+Asynchronous events
 
-##配置用户环境
-因为要跑多个站，所以最好将他们完全隔离，每个站对应一个用户，于是我们有了：
+Most events are asynchronous.
 
-     User        Site
+When an asynchronous event occurs, it gets into the Event queue.
 
-     bob         dylan     ##bob用户有一个dylan的站
-    michael     jackson    ##michael用户有一个jackson的站
+The browser has inner loop, called Event Loop, which checks the queue and processes events, executes functions etc.
 
-注册成功后，会收到DO发来的`root`账户的密码邮件，`ssh root@你的IP地址`登录上去开始添加用户。
+For example, if the browser is busy processing your onclick, and another event happened in the background (like script onload), it appends to the queue. When the onclick handler is complete, the queue is checked and the script is executed.
 
-    ##推荐安装zsh作为默认shell
-    sudo apt-get update
-    sudo apt-get install zsh
+setTimeout/setInterval also put executions of their functions into the event queue if browser is busy.
 
-    ##安装oh-my-zsh插件
-    cd ~/.
-    ##自动安装脚本
-    wget --no-check-certificate https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+In fact, most interactions and activities get passed through the Event Loop.
+ 
+## 异步事件
 
-    ##添加用户bob
-    ##参数-d：指定用户目录
-    ##参数-m：如果目录不存在则创建
-    ##参数-s：只用用户使用的 shell
-    useradd bob -d /home/bob -m -s /bin/zsh
+当异步事件发生的时候，它会进入事件队列。
 
-    #添加用户michael
-    useradd michael -d /home/michael -m -s /bin/zsh
+浏览器有内部的事件循环，它会检查队列和进程事件，执行函数等等。
 
-    ##以上参数也可以修改passwd文件来调整
-    sudo vim /etc/passwd
+如果浏览器繁忙的话，setTimeout/setInterval现在也会把函数的执行放入事件队列里。
 
-    ##sudo和用户组管理在
-    visudo
-    sudo vim /etc/sudoers
+### Stacked events
 
-新增用户之后，需要解锁：
 
-    ##为新增用户设置一个初始密码即可解锁
-    passwd bob
-    passwd michael
+     有可能同时会有多个事件加入到事件队列里。
 
-用ssh-keygen建立信任关系可以方便登录管理：
 
-    ##本地机器
-    ##会在~/.ssh目录下生成秘钥文件id_rsa、id_rsa.pub
-    ssh-keygen -t [rsa|dsa]
+例如，在屏幕同样位置，mouseup事件后面跟着的mousedown会产生点击事件。同时会有2个事件，，moueup和click事件添加到队列里。
 
-    ##复制公钥文件id_rsa.pub
-    scp ~/.ssh/id_rsa.pub bob@digitalocean:~/.ssh
+focus事件后面可能跟着mousedown。
 
-    ##VPS上，添加本地机器的信任关系
-    cd ~/.ssh
-    cat id_rsa.pub >> ~/.ssh/authorized_keys
+### setTimeout(func, 0) 的小秘密
 
-    ##OK，从本地机器登录到VPS的bob用户就不需要密码了
-    ##同理，也可以添加到michael用户的.ssh目录下
 
-更多资料可以阅读：
-<ul>
-  <li><a href="http://www.chinaunix.net/old_jh/4/438660.html" target="_blank" class="external">Linux的用户和用户组管理</a></li>
-  <li><a href="http://sofish.de/1685" target="_blank" class="external">把 Mac 上的 bash 换成 zsh</a></li>
-  <li><a href="http://leeiio.me/bash-to-zsh-for-mac/" target="_blank" class="external">zsh – 给你的Mac不同体验的Terminal</a></li>
-  <li><a href="http://blog.csdn.net/kongqz/article/details/6338690" target="_blank" class="external">ssh-keygen的使用方法</a></li>
-  <li><a href="http://www.ruanyifeng.com/blog/2014/03/server_setup.html" target="_blank" class="external">Linux服务器的初步配置流程</a></li>
-  <li><a href="http://www.ruanyifeng.com/blog/2014/03/server_setup.html" target="_blank" class="external">Linux服务器的初步配置流程</a></li>
-</ul>
+如果setTimeout的最后一个参数是0，它会试图尽快的执行函数。
 
-##为每个APP创建Virtualenv
 
-[Virtualenv][VE]可以为每个Python应用创建独立的开发环境，使他们互不影响，Virtualenv能够做到：
-<ul>
-  <li>在没有权限的情况下安装新套件</li>
-  <li>不同应用可以使用不同的套件版本</li>
-  <li>套件升级不影响其他应用</li>
-</ul>
-
-安装Virtualenv
-
-    ##先安装Python的包管理pip
-    sudo apt-get install pip
-
-    ##用pip安装virtualenv
-    sudo pip install virtualenv
-
-    ##建议用bob用户登录操作
-    ##bob用户创建dylan的virtualenv
-    cd /home/bob
-    virtualenv dylan
-
-    ##激活virtualenv
-    cd /home/bob/dylan
-    source ./bin/activate
-
-    ##取消激活只需
-    deactivate
-
-    ##michael用户如法炮制即可
-
-##安装Flask
-[Flask][Flask]是Python流行的一个web框架，但是Flask比Django轻量了许多，使用更加直观，这里并不展开讲Flask的细节，当做一个Hello Wordld来用就好了。
-
-    ##安装Flask
-    ##依然在virtualenv activate的环境下
-    pip install Flask
-
-    ##根目录下
-    vim runserver.py
-
-    ##写入Flask的Hello World
-    from flask import Flask
-    app = Flask(__name__)
-
-    @app.route('/')
-    def hello_world():
-        return 'Hello World!'
-
-        if __name__ == '__main__':
-            app.run()
-
-写入之后，如果在本地机器上可以运行`python runserver.py`，然后打开`127.0.0.1:5000`看到Hello World!了，但在VPS，这样不行，等待后面配置吧。
-
-##安装Gunicorn
-[Gunicorn][Gu]是用于部署WSGI应用的，任何支持WSGI的都可以，虽说直接`python runserver.py`这样网站也能跑起来，但那是方便开发而已，在线上环境，还是需要更高效的组件来做。
-
-    ##安装Gunicorn
-    ##依然在Virtualenv环境下
-    pip install gunicorn
-
-Gunicorn的配置是必须的，因为我们要上两个独立的站，所以不能都用默认的配置：
-
-    ##在bob的dylan项目下
-    cd /home/bob/dylan
-    vim gunicorn.conf
-
-    ##文件内写入以下内容
-    ##指定workers的数目，使用多少个进程来处理请求
-    ##绑定本地端口
-    workers = 3
-    bind = '127.0.0.1:8000'
-
-    ##在michael的jackson项目下
-    cd /home/michael/jackson
-    vim gunicorn.conf
-
-    ##写入文件内容
-    ##与dylan的端口要不一样
-    workers = 3
-    bind = '127.0.0.1:8100'
-
-最终的目录结构应该是这样的
-
-    /home/
-    └── bob  //用户目录
-    │   ├── logs
-    │   └── dylan  //项目目录
-    │       ├── bin
-    │       │   ├── activate
-    │       │   ├── easy_install
-    │       │   ├── gunicorn
-    │       │   ├── pip
-    │       │   └── python
-    │       ├── include
-    │       │   └── python2.7 -> /usr/include/python2.7
-    │       ├── lib
-    │       │   └── python2.7
-            ├── local
-    │       │   ├── bin -> /home/shenye/shenyefuli/bin
-    │       │   ├── include -> /home/shenye/shenyefuli/include
-    │       │   └── lib -> /home/shenye/shenyefuli/lib
-    │       │
-    │       │ //以上目录是Virtualenv生成的
-    │       ├── gunicorn_conf.py  //Gunicorn的配置文件
-    │       └── runserver.py  //hello_world程序
-    │
-    │
-    └── michael  //用户目录
-        ├── logs
-        └── jackson //项目目录
-            ├── bin
-            │   ├── activate
-            │   ├── easy_install
-            │   ├── gunicorn
-            │   ├── pip
-            │   └── python
-            ├── include
-            │   └── python2.7 -> /usr/include/python2.7
-            ├── lib
-            │   └── python2.7
-            ├── local  //以上这些文件都是Virtualenv需要的
-            │   ├── bin -> /home/shenye/shenyefuli/bin
-            │   ├── include -> /home/shenye/shenyefuli/include
-            │   └── lib -> /home/shenye/shenyefuli/lib
-            │
-            │ //以上目录是Virtualenv生成的
-            ├── gunicorn_conf.py  //Gunicorn的配置文件
-            └── runserver.py  //hello_world程序
-
-##安装Supervisor
-[Supervisor][SV]可以同时启动多个应用，最重要的是，当某个应用Crash的时候，他可以自动重启该应用，保证可用性。
-
-    ##安装Supervisor
-    ##sudo安装
-    sudo apt-get install supervisor
-
-    ##启动服务
-    sudo service supervisor start
-    ##终止服务
-    sudo service supervisor stop
-    ##也可以直接kill pid
-    ps -A | grep supervisor
-
-修改了程序代码，或者修改了配置，需要手动重启supervisor服务，尤其是摸不着头脑的错误的时候，重启最能解决问题！
-
-安装好之后，开始配置各应用的supervisor服务：
-
-    ##supervisor的配置文件位置在：
-    /etc/supervisor/supervisor.conf
-
-    ##为了代码好看一些，我们分别放置各项目的配置文件
-    ##新建bob的dylan项目配置文件
-    touch /etc/supervisor/conf.d/dylan.conf
-
-    ##文件内容
-    [program:dylan]
-    ##注意项目目录和gunicorn的配置文件地址
-    command=/home/bob/dylan/bin/gunicorn runserver:app -c /home/bob/dylan/gunicorn.conf
-    directory=/home/bob/dylan
-    user=bob
-    autostart=true
-    autorestart=true
-    ##log文件的位置
-    stdout_logfile=/home/bob/logs/gunicorn_supervisor.log
-
-
-    ##新建michael的jackson项目配置文件
-    touch /etc/supervisor/conf.d/jackson.conf
-
-    ##文件内容
-    [program:jackson]
-    command=/home/michael/jackson/bin/gunicorn runserver:app -c /home/michael/jackson/gunicorn.conf
-    directory=/home/michael/jackson
-    user=michael
-    autostart=true
-    autorestart=true
-    stdout_logfile=/home/michael/logs/gunicorn_supervisor.log
-
-写好配置之后：
-
-    ##重新读取配置
-    sudo supervisorctl reread
-
-    ##启动服务
-    sudo supervisorctl start dylan
-    sudo supervisorctl start jackson
-
-    ##停止服务
-    sudo supervisorctl stop dylan
-    sudo supervisorctl stop jackson
-
-    ##有问题就重启supervisor的总服务
-    sudo service supervisor stop
-    sudo service supervisor start
-
-##安装Nginx
-有了[Gunicorn][GU]、[Supervisor][SV]，本地的环境的算是搭好了，但是我们需要让VPS上的网站从外网可以访问，这时候需要Nginx。
-
-[Nginx][Nginx]是轻量级、性能强、占用资源少，能很好的处理高并发的反向代理软件，是我们的不二选择：
-
-    ##安装Nginxx
-    sudo apt-get install nginx
-
-    ##启动服务
-    sudo service nginx start
-
-    ##查看VPS的IP地址
-    ifconfig eth0 | grep inet | awk '{ print $2  }'
-
-    ##重启和暂停服务
-    sudo service nginx restart
-    sudo service nginx stop
-
-Nginx的配置文件和Supervisor类似，不同的程序可以分别配置，然后被总配置文件include：
-
-    ##Nginx的配置文件地址
-    /etc/nginx/nginx.conf
-
-    ##新建bob的dylan项目配置文件
-    ##在sites-available目录下
-    touch /etc/nginx/sites-available/dylan.com
-
-    ##文件内容
-    server {
-            listen   80;             //端口
-            server_name dylan.com;   //访问域名
-
-            root /home/bob/dylan/;
-            access_log /home/bob/logs/access.log;
-            error_log /home/bob/logs/access.log;
-
-            location / {
-                    proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $http_host;
-                    proxy_redirect off;
-                    if (!-f $request_filename) {
-                            proxy_pass http://127.0.0.1:8000;  //这里是dylan的gunicorn端口
-                            break;
-                    }
-            }
+函数的执行在最近的定时器tick进入事件队列。注意，那不是立即执行的。知道下一个tick才会执行。 
+
+###在父节点工作之后延迟触发
+
+
+事件首先在孩子节点上触发然后冒泡到他的父节点。但是孩子节点可能想要在父节点后触发。
+
+
+例如，document.keypress来管理hotkeys，然后孩子节点想在hotkey完成之后处理事件。
+
+或者，有一个document.mouse管理的drag and drop，孩子元素想在拖拽后处理它的执行。
+
+Event capturing is not supported in IE<9. And there can be other reasons to avoid it.
+
+事件捕获在IE9以下不被支持。有其它的原因来避免它。
+The recipe is usually setTimeout(.., 0). On the example below, the click is first processed by document.body, then input:
+
+解决方案通常是setTimeout(.., 0)。在以下的例子，click首先被document.body处理，然后才是input:
+
+     <input type="button" value='click'>
+     <script>
+     var input = document.getElementsByTagName('input')[0]
+     
+    input.onclick = function() {
+      setTimeout(function() {
+        input.value +=' input' 
+      }, 0)
     }
-
-
-    ##michael的jackson项目
-    touch /etc/nginx/sites-available/jackson.com
-
-    ##文件内容
-    server {
-            listen   80;               //端口
-            server_name jackson.com;   //访问域名
-
-            root /home/michael/jackson/;
-            access_log /home/michael/logs/access.log;
-            error_log /home/michael/logs/access.log;
-
-            location / {
-                    proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $http_host;
-                    proxy_redirect off;
-                    if (!-f $request_filename) {
-                            proxy_pass http://127.0.0.1:8100;  //这里是jackson的gunicorn端口
-                            break;
-                    }
-            }
+     
+    document.body.onclick = function() {
+      input.value += ' body'
     }
+    </script>
 
-配置完成之后，'sudo service nginx restart'重启一下服务，再配置一下本地的Hosts，打开浏览器应该就能看到了。
-
-##完成
-至此，一个完整的环境搭建就完成了，推荐试用[DigitalOcean][DO]的VPS看看，`2014SSD`（或请尝试`10TOSHIP`）的优惠码也可以试试看看有没有过期哦~
+### 给浏览器一点时间来完成工作
 
 
-[DO]: https://www.digitalocean.com/?refcode=f95f7297ed94 "DigitalOcean"
-[VE]: http://www.virtualenv.org/en/latest/ "Virtualenv"
-[Flask]: http://flask.pocoo.org/docs/ "Flask"
-[GU]: http://gunicorn.org/ "Gunicorn"
-[SV]: http://supervisord.org/ "Supervisor"
-[Nginx]: http://nginx.com/ "Nginx"
-[BeiYuu]:    http://beiyuu.com  "BeiYuu"
+大多数时候，我们可以在浏览器默认行为之前处理事件。但有时候我们需要浏览器行为的结果来处理。
+
+例如，我们把一个输入框的文本转换成大写。
+
+
+     <input id='my' type="text">
+     <script>
+         document.getElementById('my').onkeypress = function(event) {
+            this.value = this.value.toUpperCase()
+         }
+     </script>
+    
+
+See? It doesn't work! The value is uppercased *except last char*, because the browser appends the char *after* `keypress` is processed. Of course, we could switch to `keyup`, it has full value. But then the char would show up as lowercased, and get uppercased on key release. That looks weird. Type to see (`keyup`): The solution is to use `keypress`, but apply uppercase in a timeout: 
+
+试一下，你会发现，除了最后一个字母，输入框的值都被转换成大写了，因为浏览器在‘keypress’之后才会把字母放到输入框中。当然，我们可以使用‘keyup’。但是字符会作为小写字母显示，然后再key释放的时候才会被变成大写，这看起来会很奇怪。解决方案是使用‘keypress’，但是在timeout里应用准换。
+
+     <input id='my-ok' type="text">
+     <script>
+       document.getElementById('my-ok').onkeypress = function() {
+       var self = this
+       setTimeout(function() {
+         self.value = self.value.toUpperCase()
+         }, 0)
+       }
+    </script>
+
+timeout会在字符添加后执行，但是很快，因此这个延迟是看不见的。
+    
+## 异步事件
+
+
+存在不需要使用事件队列的事件。他们被称为同步事件，会立即工作即使是在其他的handler里。
+
+### DOM改变事件是同步的
+
+In the example below, the onclick handler changes an attribute of the link, which has a DOMAttrModified(onpropertychange for IE) listener.
+
+在下面的例子中，onclick事件处理器改变链接的属性，有一个DOMAttrModified(IE:onpropertychange)监听器。
+
+
+同步改变事件在点击的时候会立即处理。
+
+     <script>
+       var a = document.body.children[0]
+       a.onclick = function() {
+         alert('in onlick')
+         this.setAttribute('href', 'lala')
+         alert('out onclick')
+         return false
+       }
+       function onpropchange() {
+         alert('onpropchange')
+       }
+       if (a.addEventListener) { // FF, Opera
+         a.addEventListener('DOMAttrModified', onpropchange, false)
+       }
+       if (a.attachEvent) { // IE 
+          a.attachEvent('onpropertychange', onpropchange)
+       } 
+     </script>
+
+
+The click processing order:
+
+click事件处理顺序：
+
+1、alert('in onclick') 
+
+2、属性发生改变后，DOM mutation事件立即同步触发onchange，输出alert('onpropchange').
+
+3、onclik其余部分执行，alert('out onclick').
+    
+### 嵌入的DOM事件是同步的
+
+
+
+     有些方法会触发立即执行的事件，比如elem.focus().这些事件会以同步的方式执行。
+
+
+Run the example below and click on the button. Notice that onfocus
+doesn’t wait onclick to complete, it works immediately.
+运行下面的例子。注意onfocus没有等到onclick完成，它是同步执行的。
+
+     <input type="text">
+     <script>
+       var button = document.body.children[0]
+       var text = document.body.children[1]
+       button.onclick = function() {
+         alert('in onclick')
+         text.focus()
+          alert('out onclick')
+       }
+        text.onfocus = function() {
+         alert('onfocus') 
+         text.onfocus = null  //(*)
+       }
+     </script>
+
+
+上面的例子中，alert的顺序是onclick->focus->out，很清楚的演示了同步的行为。
+
+如果事件是有JS的dispatchEvent/fireEvent触发的，它们也是同步执行的。
+
+Synchronous events break this one-by-one rule, that may can cause side-effects.
+
+For example, the onfocus handler may assume that onclick has completed the job.
+
+There are two ways to fix it:
+
+同步事件破坏了这种一对一的规则，可能会产生副作用。
+
+例如，onfoucs的处理器可能认为onclick已经完成了工作。
+
+有两种方式来fix:
+
+1、把text.focus() 放到onclick代码的最后。
+
+2、把text.focus() 放入 setTimeout(.., 0)。
+
+      button.onclick = function() {
+        alert(1)
+        setTimeout(function() { text.focus() }, 0)
+        alert(2)
+      }
+
+
+JavaScript execution and rendering
+
+##Javascript执行和渲染
+
+
+在大多数浏览器中，渲染和JS使用一个事件队列。这意味着，在JS运行的时候，没有渲染发生。
+
+
+试试下面的demo。你会发现，浏览器可能会停止一些时间，因为它改变div.style.backgroundColor从#A00000 到 #FFFFFF.
+
+
+在大多数浏览器中，在脚本完成之前，你什么都不看到，或是浏览器停止，并提示“脚本运行时间太长”
+
+      <div style="width:200px;height:50px;background-color:#A00000"></div>
+      <input type="button" onclick="run()" value="run()">
+      <script>
+      function run() {
+         var div = document.getElementsByTagName('div')[0]
+         for(var i=0xA00000;i<0xFFFFFF;i++) {
+           div.style.backgroundColor = '#'+i.toString(16)
+         }
+      }
+      </script>
+
+在Opera里，你或许注意中div被绘制了。但是不是每一次变化会产生一个重绘，或许是因为Opera内部的调度。在这个浏览器里，渲染和JS的事件队列是不同的
+
+
+在其它浏览器里，渲染会被推迟知道JS执行完毕
+
+
+实现可能有所不同，但是一般俩说，节点被标记为“dirty”（需要重新计算和重绘），重绘事件排入队列，或者浏览器可能只是在每个脚本完成之后寻找dirty节点，然后处理他们。
+The browser contains many optimizations to speedup rendering and painting. Generally, it tries to postpone them until the script is finished, but some actions require nodes to be rerendered immediately.
+
+For example:
+elem.innerHTML = 'new content'
+alert(elem.offsetHeight)  // <-- rerenders elem to get offsetHeight
+
+In the case above, the browser has to perform relayouting to get the height.
+But it doesn’t have to repaint elem on the screen.
+
+Sometimes other dependant nodes may get involved into calculations. This process is called reflow and may consume lots of resources if script causes it often.
+
+Surely, there’s much more to talk about rendering. It will be covered by a separate article [todo].
+
+      Immediate reflow
+      
+      浏览器包含了很多优化来加速渲染和绘制。一般来说，它会尽量延迟它们知道脚本执行完成。但是一些行为会要求节点理解重新渲染
+      例如
+      elem.innerHTML = 'new content'
+      alert(elem.offsetHeight)  // <-- rerenders elem to get offsetHeight
+      在上面的情况下，浏览器必须执行relayouting来得到高度。但是它不必重新在评论上绘制
+      有时候，其它一些独立的节点也会涉及到计算中。这些过程被称为reflow，如果脚本很频繁的触发，可能会占用许多资源。
+
+##总结
+
+
+大多数浏览器共用UI和JS线程，会被同步调用阻塞。因此，JS执行阻塞渲染。
+
+
+除了DOM事件之外，事件都是同步处理的。
+
+
+setTimeout(..,0)非常有用：
+
+  让浏览器渲染当前的变化
+  
+  避免 “script is running too long”警告
+  
+  改变执行流
+
+
+对于timeout和线程，Operar在许多方面都很特殊
+
