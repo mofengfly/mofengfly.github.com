@@ -1,8 +1,8 @@
 # ---------------- #
 #   Main Configs   #
 # ---------------- #
-baseurl: http://www.mazhuang.org
-url: http://www.mazhuang.org
+baseurl: http://mofengfly.githup.io
+url: http://mofengfly.githup.io
 date_format: "ordinal"
 title: 在路上
 author: 在路上 
@@ -28,7 +28,7 @@ gems:
 # ---------------- #
 #      Comments    #
 # ---------------- #
-duoshuo_short_name: mazhuang
+duoshuo_short_name: 在路上
 
 # ---------------- #
 #      Adsense     #
