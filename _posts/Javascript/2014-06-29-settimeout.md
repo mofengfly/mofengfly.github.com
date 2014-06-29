@@ -1,15 +1,20 @@
 ---
 layout: post
-title: VPS环境搭建详解 (Virtualenv+Gunicorn+Supervisor+Nginx)
-description: VPS环境搭建就是去理解各种概念的过程，这篇博客记录了在VPS上搭建Python环境的过程，其中除了Python特性的东西，基本概念是相通的。关键字：Python, Virtualenv, Flask, Gunicorn, Supervisor, Nginx
-category: blog
+title: 深入理解定时器
+description: setTimeout and setInterval 在js经常用另外完成动画，将同步执行的代码转换成异步。这篇文章主要对定时器的内部机制进行分析和介绍
+关键字：setTimeout and setInterval javascript
+category: Javascript
 ---
+浏览器内部是事件驱动的。大多数行为都是异步发生的。浏览器会创建一个事件放入事件队列里。
+Internally, the browsers are event-driven. Most actions occur asynchronously and create an event which is appended to the queue.
 
-新用户注册购买[DigitalOcean][DO]的VPS，使用优惠码`2014SSD`（或请尝试`10TOSHIP`）有$10赠送，可用两个月。DO采取丧心病狂的低价竞争策略，每月$5即可享用全功能的SSD硬盘VPS，具体去看看[这里][DO]吧。
+在时间允许的时候，事件会从队列里取出。例如：
 
-注册，选择套餐、机房、系统(我选默认Ubuntu 12)，付款成功，可以开始配置了。
+*  脚本完成加载
+* Keypress, mousemove.
+* resize
 
-我们目标实现一个支持多个独立域名网站的线上Python环境，这会用到[Virtualenv][VE]， [Flask][Flask]， [Gunicorn][GU]， [Supervisor][SV]， [Nginx][Nginx]。
+许多事件与Javascript整合，许多事件被严格限制在内部。
 
 ##配置用户环境
 因为要跑多个站，所以最好将他们完全隔离，每个站对应一个用户，于是我们有了：
