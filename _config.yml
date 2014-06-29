@@ -1,8 +1,8 @@
 # ---------------- #
 #   Main Configs   #
 # ---------------- #
-baseurl: http://mofengfly.githup.io
-url: http://mofengfly.githup.io
+baseurl: http://mofengfly.github.io
+url: http://mofengfly.github.io
 date_format: "ordinal"
 title: 在路上
 author: 在路上 
