@@ -5,7 +5,6 @@ description: setTimeout and setInterval 在js经常用另外完成动画，将�
 categories: javascript
 ---
 浏览器内部是事件驱动的。大多数行为都是异步发生的。浏览器会创建一个事件放入事件队列里。
-Internally, the browsers are event-driven. Most actions occur asynchronously and create an event which is appended to the queue.
 
 在时间允许的时候，事件会从队列里取出。例如：
 
@@ -232,7 +231,91 @@ click事件处理顺序：
       在上面的情况下，浏览器必须执行relayouting来得到高度。但是它不必重新在评论上绘制
       有时候，其它一些独立的节点也会涉及到计算中。这些过程被称为reflow，如果脚本很频繁的触发，可能会占用许多资源。
 
-##总结
+##setInterval真实的延迟
+
+
+
+
+setInterval(func, delay) 不会保证在执行间的间隔时间。真实的延迟可能快或慢与给定的延迟
+
+事实上，它一点都不能保证会有任何的延迟
+
+如果我们需要有固定的延迟间隔，使用setTimeout.
+
+###最小的延迟
+
+
+定时器的分辨率是有限的。实际上，现代浏览器的最小定时器tick在1ms和15ms之间，可能比老浏览器更大一些。
+
+
+如果定时器分辨率是10ms，那么setTimeout(..,1) 和 setTimeout(..,9)就是没有区别的。
+
+
+我们看看下一个例子。这个例子会运行好几个定时器，从2ms到20ms。每个定时器增加相应div的长度。
+
+
+在不同的浏览器下运行，注意到对于大多数，前几个div动画效果是一样的。那正是引文定时器在时间很小的情况下没有什么不同。
+
+## 上下文环境中的this
+
+setInterval/setTimeout执行的函数中的this=window，在ES5严格模式下this=undefined;
+
+      <input type="button" 
+        onclick="setTimeout(function() { this.value='OK' }, 100)"
+        value="Click me"
+      >
+
+### 方法调用
+
+在面向对象的代码里，调用的函数可能不会像想象中的那样工作。
+
+     function User(login) {
+       this.login = login
+       this.sayHi = function() {
+         alert(this.login)
+       }
+     }
+     var user = new User('John')
+     setTimeout(user.sayHi, 1000)
+
+user.sayHi 确实执行了，但是setTimeout在没有上下文环境中执行函数。
+
+
+它其实和下面是一样的：
+
+     setTimeout(user.sayHi, 1000) 
+     var f = user.sayHi
+     setTimeout(f, 1000)
+
+有两种方式解决这个问题，一种方式是创建一个中间函数：
+
+     function User(name) {
+       this.name = name
+       this.sayHi = function() {
+         alert(this.name)
+       }
+     }
+     var user = new User('John')
+     setTimeout(function() {
+       user.sayHi()
+     }, 1000)
+
+第二种方式是通过闭包而不是this来绑定sayHI到对象。
+
+     function User(name) {
+       this.name = name
+       var self = this
+       this.sayHi = function() {
+        alert(self.name)
+       }
+     }
+     var user = new User('John')
+     setTimeout(user.sayHi, 1000)
+
+
+
+
+#总结
 
 
 大多数浏览器共用UI和JS线程，会被同步调用阻塞。因此，JS执行阻塞渲染。
@@ -252,3 +335,9 @@ setTimeout(..,0)非常有用：
 
 对于timeout和线程，Operar在许多方面都很特殊
 
+
+####参考文献
+
+Understanding timers: setTimeout and setInterval：http://javascript.info/tutorial/settimeout-setinterval
+
+Events and timing in-depth： http://javascript.info/tutorial/events-and-timing-depth
