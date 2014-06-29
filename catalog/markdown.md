@@ -12,6 +12,11 @@ title: MarkDown Test
 
 ###超链接
 ```
+[靠谱-ing](http://www.mazhuang.org)
+<http://www.mazhuang.org>
+```
+[靠谱-ing](http://www.mazhuang.org)  
+<http://www.mazhuang.org>
 
 ###列表
 ```

@@ -1,11 +1,11 @@
 # ---------------- #
 #   Main Configs   #
 # ---------------- #
-baseurl: http://mofengfly.githup.io
-url: http://mofengfly.githup.io
+baseurl: http://www.mazhuang.org
+url: http://www.mazhuang.org
 date_format: "ordinal"
-title: 在路上
-author: 在路上 
+title: 靠谱-ing
+author: Zhuang Ma 
 paginate: 9
 
 # ---------------- #
@@ -25,6 +25,10 @@ permalink: /:year/:month/:day/:title
 gems:
     - jekyll-sitemap
 
+# ---------------- #
+#      Comments    #
+# ---------------- #
+duoshuo_short_name: mazhuang
 
 # ---------------- #
 #      Adsense     #
