@@ -1,7 +1,11 @@
----
-layout:           default
----
-
-<div id="content">
-    {{ content }}
+{% include header.html %}
+<div id="container">
+    {% include navigation.html %}
+    <div id="main">
+        <h2> {{ page.title }} </h2>
+        {{ content }}
+        {% include ads_footer.html %}        
+        {% include duoshuo.html %}
+    </div>
 </div>
+{% include footer.html %}

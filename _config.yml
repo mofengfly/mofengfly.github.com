@@ -1,11 +1,33 @@
-auto: true
+# ---------------- #
+#   Main Configs   #
+# ---------------- #
+baseurl: http://mofengfly.githup.io
+url: http://mofengfly.githup.io
+date_format: "ordinal"
+title: 在路上
+author: 在路上 
+paginate: 9
 
-markdown: rdiscount
+# ---------------- #
+#   RSS / Email    #
+# ---------------- #
+subscribe_rss: /atom.xml
+email:
+
+# ---------------- #
+#      Jekyll      #
+# ---------------- #
+markdown: redcarpet
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data", "strikethrough"]
 pygments: true
-paginate: 8
-permalink: /:title
+permalink: /:year/:month/:day/:title
+gems:
+    - jekyll-sitemap
 
-title: mofengfly.githup.com
-url: http://mofengfly.githup.com
-feed: /atom.xml
-author_info: <a href="http://mofengfly.githup.com/">在路上</a>
+
+# ---------------- #
+#      Adsense     #
+# ---------------- #
+adsense: false
+amazon: true
