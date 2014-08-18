@@ -8,7 +8,7 @@ categories: NodeJS
 
 ##ChildProcess
 
-子进程总是会有3个相关的流：child.stdin、chidl.stdout和child.stderr。这些可能会与父进程共享或者独立的流对象
+子进程总是会有3个相关的流：child.stdin、chidl.stdout和child.stderr。这些可能会与父进程的stidio共享，或者独立的流对象
 
 ###child_process.spawn
 
@@ -19,6 +19,7 @@ command: 字符串，代表要执行的命令
 args：数组，命令执行时的参数
 
 options：对象
+
 * cwd: 字符串，子进程的当前工作目录
 * stdid: 字符串或数组，子进程stdio的配置
 * env: 对象，环境键值对
@@ -46,6 +47,8 @@ options：对象
 'stdio'的值是一个数组，数组中的每一个索引都对应子进程中的一个fd，取值如下：
 
 * “pipe”: 在父子进程之间创建一个管道。管道的父端在child_process中会作为一个属性prarent（ ChildProcess.stdio[fd]）存在。为fd0-2创建的管道也可以相应的通过ChildProcess.stdin, ChildProcess.stdout and ChildProcess.stderr获得。
+
+
 * 'ipc' ：在父子进程之间创建一个IPC通道用来传递消息或者文件描述符。一个子进程最多可以有一个IPC stdio文件描述符。设置这个选项可以是ChildProcess.send()可用。如果子进程向文件描述符希尔JSON消息，就就触发ChildProcess.on('message')。如果子进程是一个NodeJs程序，那么IPC通道的存在就会启用process.send()和process.on(message)
 * 'ignore': 不在子进程中设置这个文件描述符。注意这个节点总是会打开它启动的进程的0-2的文件描述符。在它们中的任何一个被忽略之后，node会打开/dev/null，并把它加到子进程的文件描述上
 * Stream object ：共享一个可读或可写的流，这个流指向一个终端或是文件、socket或者与子进程的管道。这个流潜在的文件描述符在子进程里被复制到对stdio数组对应的索引的文件描述符。注意stream必须有一个潜在的描述符（文件流只有在‘open’事件打开时才能使用）
@@ -86,8 +89,9 @@ options： 对象
 * env: 对象，环境键值对
 * encoding: 字符串(默认是“UTF-8”)
 * timeout: Number,默认是0
-* maxBuffer Number (默认大小是200*1024)
+* maxBuffer Number (默认大小是200 * 1024)
 * killSignal 字符串(Default: 'SIGTERM')
+
 
 当进程终止的时候会使用output调用回调函数
 * error Errror
@@ -122,6 +126,7 @@ child_process.fork(modulePath, [args], [options])
 moudlePath: String，在子进程里运行的模块
 args: 字符串参数的数组列表
 opations: object
+
 * cwd: 字符串，子进程的当前工作目录
 * stdid: 字符串或数组，子进程stdio的配置
 * env: 对象，环境键值对
