@@ -91,6 +91,18 @@ Minute Hour Day Month DayOFWeek Command
 
 ```
 
+###crontab脚本的输出到文件
+有时候我们的脚本中有echo，或是nodejs中有congsole的输出，我们需要用这些log来判断执行是否正常，如果出错了，原因是什么，可以用下面的命令来将输出写入到文件中，方便我们查看。
+```
+$ crontab -e
+59 23 * * * /home/mofeng/log/backup.sh > /home/mofeng/logs/backup.log 2>&1
+```
+* /home/mofeng/logs/backup.log表示backup.sh脚本的输出会被重定向到backup.log中。
+
+* 2>&1 表示标准错误(2>)也会被重定向到标准输出(&1)指向的同样的文件描述符。
+* 所以，标准错误和输出都会写入到backup.log文件中
+
+
 ###注意
 
 如果我们要启动的脚本需要root权限，就需要把crontab命令放入root用户的crontab文件里。此外，因为是以root的身份执行的，当前用户的一些shell命令root可能找不到，因此在crontab前，可能还需要加上：
