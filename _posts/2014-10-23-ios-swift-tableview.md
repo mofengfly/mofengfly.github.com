@@ -48,7 +48,7 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
    return cell
 }
 ```
-第一个是确定section里有多少行，在上面这个例子里，我们硬编码返回10，但是通常来说，它回事一个数组的长度
+第一个是确定section里有多少行，在上面这个例子里，我们硬编码返回10，但是通常来说，它会是一个数组的长度
 
 第二个方法非常关键。这里，我们创建了一个UITableViewCell的实例cell，采用Subtitle cell样式。然后，给cell的text赋值。
 
