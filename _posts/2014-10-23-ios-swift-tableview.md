@@ -5,6 +5,8 @@ description: TableView是IOS一个非常常见的组件，这里学习一下如�
 categories: ios
 ---
 
+### TableView
+
 1.添加一个TableView
 
 在xcode中打开Main.storyboard文件，从Object Library选择（control+drag+click）TableView拖进去，可以定位，调整它的大小
@@ -54,3 +56,14 @@ func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexP
 
 detailTextLabel只有在Subtitle cell样式里才会有
 
+
+
+### 链接UI
+
+我们需要链接UI到我们的代码里，才能在代码里引用。在ViewController.swift里添加：
+
+```
+@IBOutlet var appsTableView : UITableView?
+```
+
+这行代码允许storyboard里的TableView连接到这个变量appsTableView。打开storyboard，选择View Controller对象，选择右手边最后一个tab，Connections Inspector。在这里可以看到一个叫appsTableView的outlet，点击然后拖拽appsTableView傍边的圆圈到场景中得TableView
