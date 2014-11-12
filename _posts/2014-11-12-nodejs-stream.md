@@ -68,3 +68,6 @@ categories: NodeJs
    res.end();
  }).listen(9000);
 ```
+
+
+来自：https://docs.nodejitsu.com/articles/advanced/streams/how-to-use-stream-pipe
