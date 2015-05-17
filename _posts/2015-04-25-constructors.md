@@ -1,13 +1,17 @@
 ---
+
 layout: post
 
-title: Javascript 构造器
+title: 构造器 
 
-description：构造器
+description: 构造器
 
 categories: javascript
 
 ---
+
+
+
 
 近来在看一些javascript的基础知识，JS的基于原型的继承，对于JS基于原型的继承，看过很多遍，但似乎都是死记硬背的，没有
 从语言的设计层面，以及基于原型的继承带来的与其他面向对象语言的不同去理解。我需要回归，需要再次从头开始去理解这些概念。
