@@ -55,6 +55,8 @@ categories: thinking
 ### H5开发
 * 兼容性问题
 
+### 性能优化
+
 
 
 
