@@ -43,9 +43,20 @@ categories: thinking
 
 读源码的目的，是学习大牛的代码写法，框架的设计思想，还为我所用
 
+### Javascript基础
+* [speakingjs](http://speakingjs.com/es5/index.html)
+* 关注:http://www.2ality.com/
+* 重要概念：基于原型的继承，原型链、事件
+
 ### 工具
 * 工程化思维，提高开发效率
 * gulp等开发工具
+
+### H5开发
+* 兼容性问题
+
+
+
 
 ### IOS开发
 扩展技能
