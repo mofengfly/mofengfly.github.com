@@ -1,8 +1,12 @@
 ---
 layout: post
+
 title: Javascript 构造器
-description：对于JS里构造器一直没觉得是个什么不得了的东西，近来看来一些大神的文章，发现很多大神对于构造器的使用存在不同的看法。
+
+description：构造器
+
 categories: javascript
+
 ---
 
 近来在看一些javascript的基础知识，JS的基于原型的继承，对于JS基于原型的继承，看过很多遍，但似乎都是死记硬背的，没有
